@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Dataset - Samanvãya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .animate-fade-in { opacity: 0; transform: translateY(10px); transition: all 0.5s ease-out; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+    <!-- Navbar -->
+    <nav class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('dashboard') }}" class="text-slate-400 hover:text-white transition group flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Back
+                </a>
+                <div class="h-6 w-px bg-slate-700"></div>
+                <div class="flex items-center gap-2">
+                    <div class="h-6 w-6 bg-indigo-500 rounded flex items-center justify-center font-bold text-xs">S</div>
+                    <span class="font-bold tracking-tight">Upload</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-3xl mx-auto px-4 w-full py-12 flex flex-col justify-center">
+        <div class="text-center mb-10 animate-fade-in block">
+            <h1 class="text-3xl font-bold mb-3">Upload Messy Dataset</h1>
+            <p class="text-slate-400">Supported formats: .CSV, .XLS, .XLSX</p>
+        </div>
+
+        <div class="glass-panel p-8 rounded-2xl shadow-xl animate-fade-in block" style="transition-delay: 100ms;">
+            <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data" class="space-y-6 block">
+                <div id="drop-zone" onclick="document.getElementById('file').click()" class="border-2 border-dashed border-slate-600 rounded-xl p-12 text-center hover:bg-slate-800/50 hover:border-indigo-500 transition-all cursor-pointer group">
+                    <div class="h-16 w-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-400 group-hover:text-indigo-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium mb-1">Click to browse or drag and drop</h3>
+                    <p class="text-sm text-slate-500 mb-6" id="file-name-display">No file selected yet</p>
+                    
+                    <input type="file" id="file" name="file" class="hidden" accept=".csv, .xls, .xlsx" required>
+                    <button type="button" class="bg-slate-700 hover:bg-slate-600 text-white px-5 py-2.5 rounded-lg font-medium transition-colors text-sm">
+                        Select File
+                    </button>
+                </div>
+                
+                <button type="submit" id="submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all flex justify-center items-center gap-2">
+                    Analyze Columns
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'No file selected';
+            document.getElementById('file-name-display').textContent = fileName;
+            document.getElementById('file-name-display').classList.add('text-indigo-400');
+            document.getElementById('drop-zone').classList.add('border-indigo-500', 'bg-slate-800/50');
+        });
+    </script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

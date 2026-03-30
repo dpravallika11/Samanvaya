@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-white flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <div class="glass-panel p-8 text-center animate-fade-in-up relative overflow-hidden group animate-float shadow-lg bg-white">
+            
+            <!-- Shine effect on hover -->
+            <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-5 group-hover:animate-shine"></div>
+
+            <div class="flex justify-center mb-6">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Samanvãya Logo" class="h-24 w-24 rounded-full shadow-sm animate-glow border border-slate-100 p-1 bg-white">
+            </div>
+
+            <h1 class="text-3xl font-bold text-gray-800 mb-2 tracking-tight">Samanvãya</h1>
+            <p class="text-gray-600 mb-8 font-medium">Intelligent Data Engine</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4">
+                    {% for category, message in messages %}
+                        <div class="text-sm rounded-xl px-3 py-2 {{ 'bg-red-100 text-red-700' if category == 'error' else 'bg-emerald-100 text-emerald-700' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <script>
+                    window.addEventListener('load', function() {
+                        {% for category, message in messages %}
+                            alert("{{ message | escape }}");
+                        {% endfor %}
+                    });
+                </script>
+            {% endif %}
+        {% endwith %}
+        
+        <form action="{{ url_for('login') }}" method="POST" class="space-y-5">
+            <div>
+                <input type="text" name="username" placeholder="Username" required 
+                       class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors shadow-sm">
+            </div>
+
+            <div>
+                <input type="password" name="password" placeholder="Password" required 
+                       class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors shadow-sm">
+            </div>
+
+            <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-4 rounded-xl transition-colors shadow-sm">
+                Log in
+            </button>
+        </form>
+
+        <p class="mt-8 text-sm text-slate-500">
+            Don't have an account? 
+            <a href="{{ url_for('signup') }}" class="text-indigo-600 hover:text-indigo-700 hover:underline font-medium">
+                Sign up
+            </a>
+        </p>
+
+        </div>
+
+        <div class="glass-panel p-4 flex flex-col items-center justify-center bg-white/80">
+            <h2 class="text-xl font-semibold bg-gradient-to-r from-indigo-500 via-violet-500 to-sky-500 text-transparent bg-clip-text mb-3">
+                Welcome Back Mate!!
+            </h2>
+
+            <div class="w-full h-[360px] rounded-xl overflow-hidden">
+                <spline-viewer url="https://prod.spline.design/7uUq6iZWzLRi0Pz6/scene.splinecode" class="w-full h-full"></spline-viewer>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.10/build/spline-viewer.js"></script>
+{% endblock %}

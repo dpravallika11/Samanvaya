@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samanvãya - Dataset Transformer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Custom styling for Glassmorphism & Dark Theme -->
+    <style>
+        body {
+            background: linear-gradient(120deg, #0f172a 0%, #111827 45%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Modern SaaS Card */
+        .glass-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* soft shadow */
+            transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .glass-panel:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        }
+        /* Element Animations (Not background) */
+        @keyframes floatingElement {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: floatingElement 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); }
+            50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+            100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); }
+        }
+        .animate-glow {
+            animation: pulseGlow 3s infinite;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes shine {
+            100% { left: 125%; }
+        }
+        .animate-shine {
+            animation: shine 1.5s;
+        }
+        /* Custom Scrollbar for a clean look */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .data-table {
+            border-collapse: collapse;
+        }
+        .data-table th {
+            background-color: #f8fafc; /* slate-50 */
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0; /* slate-200 */
+            font-weight: 600;
+            color: #334155; /* slate-700 */
+            text-align: left;
+        }
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9; /* slate-100 */
+            color: #475569; /* slate-600 */
+        }
+        .data-table tr:hover td {
+            background-color: #f8fafc; /* subtle light grey hover */
+        }
+        
+        /* Loading Animation */
+        .loader {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #6366f1; /* indigo-500 */
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex flex-col relative min-h-screen">
+
+    {% block content %}
+    {% endblock %}
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

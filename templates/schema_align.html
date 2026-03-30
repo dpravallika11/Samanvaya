@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav class="glass-panel m-4 p-4 flex justify-between items-center bg-white shadow-sm border border-slate-200 rounded-xl">
+    <div class="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="w-6 h-6 rounded-full" alt="logo">
+        Samanvãya - Schema Alignment
+    </div>
+    <div class="flex gap-4 items-center">
+        <span class="text-slate-500 text-sm">Welcome, <span class="text-slate-800 font-semibold">{{ session.get('user', 'Guest') }}</span></span>
+        <a href="{{ url_for('dashboard') }}" class="text-slate-500 hover:text-slate-700 font-medium text-sm transition">Dashboard</a>
+    </div>
+</nav>
+
+<div class="flex-grow flex items-start justify-center p-4">
+    <div class="glass-panel p-8 bg-white w-full max-w-5xl animate-fade-in-up">
+        <h2 class="text-2xl font-bold mb-2 text-slate-800 tracking-tight">Multi-Dataset Schema Harmonization</h2>
+        <p class="text-sm text-slate-500 mb-8">
+            We have analyzed the uploaded datasets and suggested standardized column mappings to merge them.
+            Please review and confirm the suggested mappings below.
+        </p>
+        
+        <form action="{{ url_for('schema_align') }}" method="POST">
+            <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-xl">
+                <table class="w-full text-left data-table">
+                    <thead>
+                        <tr>
+                            <th class="py-3 px-4">Dataset</th>
+                            <th class="py-3 px-4">Original Column Name</th>
+                            <th class="py-3 px-4">Similarity Score / Status</th>
+                            <th class="py-3 px-4">Standardized Column Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mapping in alignment.mappings %}
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="font-medium text-slate-700">{{ mapping.dataset_name }}</td>
+                            <td class="text-slate-600">{{ mapping.original_col }}</td>
+                            <td class="text-sm text-slate-500">
+                                {% if mapping.confidence > 70 %}
+                                    <span class="text-emerald-600 font-medium">{{ mapping.confidence|round(1) }}% Match</span>
+                                {% elif mapping.confidence > 0 %}
+                                    <span class="text-amber-500">{{ mapping.confidence|round(1) }}% Weak Match</span>
+                                {% else %}
+                                    <span class="text-indigo-500 font-medium">New Column</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <input type="text" name="map_{{ mapping.dataset_index }}_{{ mapping.original_col }}" 
+                                       value="{{ mapping.suggested_col }}" 
+                                       class="w-full text-sm mt-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3">
+                <a href="{{ url_for('dashboard') }}" class="px-5 py-2.5 text-slate-600 bg-white border border-slate-300 rounded-xl font-medium hover:bg-slate-50 transition shadow-sm">Cancel</a>
+                <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition shadow-[0_4px_14px_0_rgba(99,102,241,0.39)]">Apply Harmonization</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

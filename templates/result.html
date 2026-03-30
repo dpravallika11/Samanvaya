@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-8 max-w-7xl mx-auto w-full flex-grow">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-indigo-500 tracking-tight">3. Transformation Complete</h1>
+        <div class="flex gap-4 items-center">
+            <a href="{{ url_for('download', filename=out_file) }}" class="bg-teal-500 hover:bg-teal-600 text-white px-5 py-2.5 rounded-lg font-medium shadow-sm hover:shadow-md transition-all flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download Excel / CSV
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="text-slate-500 hover:text-slate-700 font-medium transition flex items-center px-4">New Task</a>
+        </div>
+    </div>
+
+    <!-- Reliability Score -->
+    <div class="glass-panel p-8 mb-8 text-center relative overflow-hidden shadow-sm bg-white">
+        <div class="absolute top-0 left-0 w-full h-1 bg-slate-100">
+            <div class="h-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400" style="width: {{ reliability }}%;"></div>
+        </div>
+        <h2 class="text-xl font-semibold mb-2 text-slate-800 tracking-tight mt-2">AI Reliability Score</h2>
+        <div class="text-6xl font-bold mb-3 {% if reliability > 80 %}text-emerald-500{% elif reliability > 50 %}text-amber-500{% else %}text-rose-500{% endif %}">
+            {{ reliability }}%
+        </div>
+        <p class="text-sm text-slate-500 font-medium">Calculated based on prompt execution success and hallucination checks.</p>
+    </div>
+
+    <!-- Explainability Panel -->
+    <div class="glass-panel p-6 mb-8 mt-4 border-t-2 border-indigo-400 shadow-sm">
+        <h2 class="text-2xl font-semibold mb-6 text-slate-800 flex items-center gap-2 tracking-tight">
+            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Explainability Panel
+        </h2>
+        
+        <div class="space-y-6">
+            {% for t in transformations %}
+            <div class="bg-white p-6 rounded-2xl border {% if t.status == 'Success' %}border-emerald-200{% else %}border-rose-200{% endif %} shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg font-mono text-sm shadow-sm border border-slate-200 font-semibold">{{ t.col }}</span>
+                        <span class="text-xs px-3 py-1 rounded-full font-semibold border {% if t.mode == 'AI' %}bg-indigo-50 text-indigo-600 border-indigo-200{% else %}bg-teal-50 text-teal-600 border-teal-200{% endif %}">
+                            {{ t.mode }} Mode
+                        </span>
+                    </div>
+                    {% if t.status == 'Success' %}
+                    <span class="text-emerald-600 text-sm font-semibold flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Success
+                    </span>
+                    {% else %}
+                    <span class="text-rose-600 text-sm font-semibold flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Failed
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <p class="text-sm text-slate-700"><span class="text-slate-500 font-medium">Action requested:</span> 
+                        {% if t.mode == 'AI' %}"{{ t.prompt }}"{% else %}Predefined Manual Rule: {{ t.rule }}{% endif %}
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- LLM Reasoning -->
+                    <div>
+                        <p class="text-xs text-slate-500 mb-2 uppercase tracking-wide font-bold">AI Reasoning / Action Taken</p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 h-full text-sm text-slate-700 shadow-inner leading-relaxed">
+                            {{ t.reasoning }}
+                        </div>
+                    </div>
+                    
+                    <!-- Generated Python Code -->
+                    <div>
+                        <p class="text-xs text-indigo-500 mb-2 uppercase tracking-wide font-bold">Generated Pandas Code</p>
+                        <div class="bg-slate-900 px-4 py-3 rounded-xl border border-indigo-900 h-full font-mono text-sm text-green-400 overflow-x-auto shadow-inner">
+                            <code class="language-python">{{ t.code }}</code>
+                            {% if t.status == 'Failed' %}
+                            <p class="text-rose-400 mt-3 text-xs border-t border-rose-900 pt-3 break-all font-sans leading-relaxed">{{ t.error }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Pre/Post Transformation Preview -->
+    <div class="glass-panel p-6 mb-8 mt-[-4px] border-t-2 border-indigo-400 shadow-sm">
+        <div class="flex flex-wrap gap-4 justify-between items-center mb-4">
+            <div>
+                <h3 class="text-xl font-semibold text-slate-800">Dataset Preview</h3>
+                <p class="text-sm text-slate-500">Before and after transformation comparison for the first 10 rows.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h4 class="text-lg font-semibold text-slate-800">Before Transformation</h4>
+                        <p class="text-xs text-slate-500">Original dataset snapshot</p>
+                    </div>
+                </div>
+                <div class="overflow-auto border border-slate-100 rounded-xl p-2 bg-slate-50">
+                    {{ before_preview|safe }}
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h4 class="text-lg font-semibold text-slate-800">After Transformation</h4>
+                        <p class="text-xs text-slate-500">Transformed dataset snapshot</p>
+                    </div>
+                </div>
+                <div class="overflow-auto border border-slate-100 rounded-xl p-2 bg-slate-50">
+                    {{ after_preview|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
